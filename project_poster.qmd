@@ -37,8 +37,12 @@ include_graphics("images/old_poster.png")
 
 # Strengths
 
--   The heatmap design effectively conveys the inflation rate on a year on year basis
--   The various industries are shown providing context to the inflation rate from 2022 to 2023 in Singapore
+-	The use of heatmap design allows the data to be visually intuitive, enabling the users to determine changes in inflation rate more efficiently.
+-	The heatmap has organized the information in different categories which allow users to compare the impact of inflation towards different domains over the months. 
+-	Each category is clearly labelled while being separated with padding and a line to ensure users can focus on one category at a time without accidentally reading information from another category. This eases the visual load of the user which reduces the time needed for the users to understand the heatmap
+-	The average column calculates the average change between the years which allows the users to see the overall impact of the inflation for the different domains.
+-	Data source has been credited at the end of the heatmap where the source is from the Singapore Department of Statistics
+
 
 # Suggested Improvements
 
