@@ -37,9 +37,8 @@ include_graphics("images/old_poster.png")
 
 # Strengths
 
--   The heatmap design effectively conveys a high information content without cluttering the plot.
--   Pointing with the mouse at a tile opens an infotip, enabling readers to retrieve specific incidence data for a given state and year (@fig-infotip_color_change). The infotip only occludes a small portion of the plot, and the partial transparency of the infotip ensures visibility of the tiles underneath.
--   The vertical line indicating the year of vaccine introduction provides valuable contextual information.
+-   The heatmap design effectively conveys the inflation rate on a year on year basis
+-   The various industries are shown providing context to the inflation rate from 2022 to 2023 in Singapore
 
 # Suggested Improvements
 
