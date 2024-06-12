@@ -46,17 +46,10 @@ include_graphics("images/old_poster.png")
 
 # Suggested Improvements
 
-1.  *Add a plot title and a source note* so that the figure can be understood in isolation (e.g., when shared on social media).
-2.  *Identify missing data clearly.* Rendering unknown incidence fully transparent will distinguish it from zero incidence,
-3.  *Include labels for every state.* To avoid overplotting, use two-letter abbreviations instead of full state names and stagger the labels along the y-axis.
-4.  *Add a title to the color legend.*
-5.  *Avoid using a rainbow color palette.* It lacks a meaningful progression through color space and is not colorblind-friendly. Consider using a sequential ColorBrewer palette instead.[^1]
-6.  *Use a discrete color palette.* Continuous palettes can make it challenging for humans to detect patterns below just noticeable color differences.
-7.  *Apply a logarithmic color scale* because most data are below the mean incidence.
-8.  *Add grid lines* in ten-year intervals along the x-axis and for every second state along the y-axis. Grid lines will aid in identifying states and years in the middle of the plot, even without the infotip.
-9.  Because there are more missing data on the right side of the plot, *shifting y-axis labels to the right* will improve visually matching states with corresponding grid lines.
-
-[^1]: <https://colorbrewer2.org/#type=sequential&scheme=Reds&n=5>
+1.  *A more descriptive chart could be used* to better explain the change in inflation rate on a year on year basis.
+2.  *Spelling out the months instead of just letters* could provide better understanding of the graph rather than letters which result in the reader needing to interpret the graph for a slightly longer period of time before realising what the letters mean.
+3.  *Simply using a heatmap doesn't explicitly show the changes.* A line chart could be used to show the increase or decrease in inflation rate, the heatmap does not show this change really well. 
+4.  *Better color scheme can be used.* With the current color scheme, it is hard to interpret whether the colors indicate an increase or decrease in inflation rate.
 
 # Implementation
 
