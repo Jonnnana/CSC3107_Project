@@ -23,6 +23,7 @@ source("project_prep.R")
 ```
 
 # Introduction
+This infographic published by The Straits Times, attempts to provide a comprehensive overview of how prices have changed in 2023. It features a heat map illustrating the monthly inflationary impact on various key items, showing how different range of goods and services have experienced varying rates of price changes throughout the year. This visual representation tries to help the average reader understand the broader inflation trends and their specific impacts on essential goods and services in Singapore. With the information provided to the reader, they can then access if their personal opinion on inflation matches with actual data collected.
 
 # Previous Visualization
 
