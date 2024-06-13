@@ -7,31 +7,57 @@ editor: visual
 
 # Introduction
 
-# Data Cleaning
-## Package Import
+This document outlines the data engineering required to reconstruct and improve the visualisation of the heat map as shown in @fig-old-vis-on-poster, which depicts the monthly inflationary impact on key goods and services across each month in Singapore over 2023.
+
+The code below requires the following packages:
+
 ```{r}
-# | label: package-import
+#| label: library
+#| message: false
 
 library(tidyverse)
 library(ggplot2)
+library(knitr)
 library(dplyr)
 library(readxl)
 ```
 
-## Load Data
 ```{r}
-# | label: load-data
+#| label: fig-old-vis-on-poster
+#| echo: false
+#| fig.cap: "Heat map of inflationary impact on key items over 2023."
+
+include_graphics("images/old_poster.png")
+```
+
+# Data Cleaning
+
+The Straits Times based their visualisation on data published by the Singapore Department of Statistics (DOS). whereby the data in CSV format represents the CPI for each category of key goods and services with 2019 as the base year. The CSV file contains 15 separate sheets which cover average retail prices, CPI and year-on-year percent change in CPI across various time periods (annual, half-yearly, quarterly, and monthly) respectively.
+
+However, with reference to @fig-old-vis-on-poster, only Sheet T11 *(Percent Change In Consumer Price Index (CPI) Over Corresponding Period Of Previous Year, 2019 As Base Year, Monthly)* will be used to accurately reflect the year-on-year data ordered by month as visualised in the heat map.
+
+Relevant columns for data processing include:
+
+*   `Variables`: Name of key items. These are separated into sub-categories such
+    as "Food", "Clothing & Footwear", "Housing & Utilities", etc.
+*   Date columns: These represent year-on-year CPI values for each Variable. The columns are named according to the corresponding year and month they represent, such as 2019 Jan, 2020 Jun, etc.
+
+ The following code loads the data from Sheet T11 in the CSV file, skipping the first 5 rows and removing any rows with NA values:
+
+```{r}
+#| label: load-data
 
 # Load full data, select specific sheet (T11), skip first 5 rows and remove rows with NA values
 data <- read_excel("cpiapr24.xlsx", sheet = "T11", skip = 5) |>
   filter(if_all(everything(), ~ !is.na(.)))
 ```
 
-## Filter Data
-```{r}
-# | label: filter-data
+The data is filtered to include only the relevant variables so as to focus on the specific categories visualised on the heat map:
 
-# List of categories to include
+```{r}
+#| label: filter-data-categories
+
+# Filter the data to include only these categories
 categories <- c(
         "Food",
         "Food Excl Food Serving Services",
@@ -45,13 +71,19 @@ categories <- c(
         "Education",
         "Miscellaneous Goods & Services"
 )
+```
+
+The data is then filtered to include only data from the base year onwards (2019). This is done to narrow down the size of the dataset for easier management and faster performance, as well as to ensure the dataset's consistency with the base year:
+
+```{r}
+#| label: filter-data-date
  
-# Filter the data to include only these categories
+# Filter the data to include only these categories and the months from 2019 onwards
 data <- data |>
   filter(Variables %in% categories) |>
   select(Variables, starts_with("2019"), starts_with("2020"), starts_with("2021"), starts_with("2022"), starts_with("2023"))
 
-
+# Print the filtered data
 options(max.print = 1e6)
 print(data, n = nrow(data), width = Inf)
 ```
