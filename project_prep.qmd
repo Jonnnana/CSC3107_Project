@@ -38,11 +38,10 @@ However, with reference to @fig-old-vis-on-poster, only Sheet T11 *(Percent Chan
 
 Relevant columns for data processing include:
 
-*   `Variables`: Name of key items. These are separated into sub-categories such
-    as "Food", "Clothing & Footwear", "Housing & Utilities", etc.
-*   Date columns: These represent year-on-year CPI values for each Variable. The columns are named according to the corresponding year and month they represent, such as 2019 Jan, 2020 Jun, etc.
+-   `Variables`: Name of key items. These are separated into sub-categories such as "Food", "Clothing & Footwear", "Housing & Utilities", etc.
+-   Date columns: These represent year-on-year CPI values for each Variable. The columns are named according to the corresponding year and month they represent, such as 2019 Jan, 2020 Jun, etc.
 
- The following code loads the data from Sheet T11 in the CSV file, skipping the first 5 rows and removing any rows with NA values:
+The following code loads the data from Sheet T11 in the CSV file, skipping the first 5 rows and removing any rows with NA values:
 
 ```{r}
 #| label: load-data
@@ -60,7 +59,7 @@ The data is filtered to include only the relevant variables so as to focus on th
 # Filter the data to include only these categories
 categories <- c(
         "Food",
-        "Food Excl Food Serving Services",
+        #  "Food Excl Food Serving Services", #  Temporary commented out
         "Clothing & Footwear",
         "Housing & Utilities",
         "Household Durables & Services",
@@ -68,8 +67,8 @@ categories <- c(
         "Transport",
         "Communication",
         "Recreation & Culture",
-        "Education",
-        "Miscellaneous Goods & Services"
+        "Education"
+        #  "Miscellaneous Goods & Services" #  Temporary commented out
 )
 ```
 
@@ -81,11 +80,64 @@ The data is then filtered to include only data from the base year onwards (2019)
 # Filter the data to include only these categories and the months from 2019 onwards
 data <- data |>
   filter(Variables %in% categories) |>
-  select(Variables, starts_with("2019"), starts_with("2020"), starts_with("2021"), starts_with("2022"), starts_with("2023"))
+  select(Variables, starts_with(c("2019", "2020", "2021", "2022", "2023"))) |>
+  # Convert selected columns to numeric
+  mutate_at(vars(starts_with(c("2019", "2020", "2021", "2022", "2023"))), as.numeric)
 
 # Print the filtered data
 options(max.print = 1e6)
 print(data, n = nrow(data), width = Inf)
+```
+
+```{r}
+#| label: further-transform-data
+# Create a month mapping
+month_mapping <- c("Jan" = 1, "Feb" = 2, "Mar" = 3, "Apr" = 4, "May" = 5, "Jun" = 6,
+                   "Jul" = 7, "Aug" = 8, "Sep" = 9, "Oct" = 10, "Nov" = 11, "Dec" = 12)
+
+# Pivot the data frame
+pivoted_data <- pivot_longer(
+  data, 
+  cols = starts_with(c("2019", "2020", "2021","2022", "2023")),
+  names_to = "Month_Year",
+  values_to = "Value"
+) |>
+  # Separate the Month column into Year and Month
+  separate(Month_Year, into = c("Year", "Month"), sep = " ") |>
+  # Convert Month column into numeric using mapping
+  mutate(Year = as.numeric(Year), Month = month_mapping[Month]) |>
+  # To sort the data by Year, then by Month
+  arrange(Year, Month)
+
+pivoted_data
+```
+
+Plot the line graph using the data as above
+
+```{r}
+
+#| line-graph-plot
+
+#  Maybe it's something to build upon?
+
+# Convert Month and Year to a combined date variable for X-axis
+pivoted_data$Date <- as.Date(paste(pivoted_data$Year, pivoted_data$Month, "01", sep = "-"))
+
+pivoted_data
+
+plt <- ggplot(pivoted_data, aes(x = Date, y = Value, color = Variables)) +
+  geom_line(aes(color = Variables), alpha = 0.1, linetype="dotted") + #  add the exact line graph (harsh)
+  geom_smooth(method = "auto", se = FALSE, aes(group = Variables)) +  # Add a smooth curve
+  geom_point(aes(color=Variables), alpha=0.2) + #  add the exact data point
+  labs(
+    title = "Inflation trend",
+    x = "Date",
+    y = "Value"
+  ) +
+  theme_minimal()
+
+plt
+
 ```
 
 # Conclusion
