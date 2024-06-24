@@ -115,7 +115,7 @@ pivoted_data <- pivot_longer(
 pivoted_data
 ```
 
-Plot the line graph using the data as above
+# Attempting to plot the above data using a line graph    
 
 ```{r}
 
@@ -142,5 +142,43 @@ plt <- ggplot(pivoted_data, aes(x = Date, y = Value, color = Variables)) +
 plt
 
 ```
+# Attempting to plot a heatmap using the preprocessed above
+```{r}
+
+df_long <- 
+  pivot_longer(data, cols = -Variables, names_to = "Month", values_to = "Value")
+df_long
+
+
+# Create a data frame for the year labels and vertical lines
+years <- unique(df_long$Year)
+year_positions <- seq(12.5, by = 12, length.out = length(years))
+
+year_labels <- data.frame(
+  Year = years,
+  x_position = seq(6.5, by = 12, length.out = length(years))  # Adjust x_position for year labels
+)
+
+ggplot(df_long, aes(x = Month, y = Variables, fill = Value)) +
+  geom_tile(color = "white") +
+    scale_fill_gradient2(name = "Inflation Rate\nPercentage Change",
+                       low = "red",  # Red (low end)
+                       mid = "white",    # White (midpoint)
+                       high = "blue", # blue (high end)
+                       midpoint = 0,     # Set midpoint to 0
+                       breaks = c(20, 10, 0, -7),  # Specify breaks
+                       labels = c("20", "10", "0", "-7"),  # Specify labels
+                       ) +
+  labs(x = "Years", y = "Variables", title = "Heatmap of Variables by Month") +
+  theme_minimal() +
+  theme(legend.position = "top",  # Move legend to the top
+        plot.title = element_text(hjust = 0.5),  # Center plot title
+        axis.text.x = element_blank()  # Remove x-axis text
+  ) +
+  coord_fixed(ratio = 5) +  # Ensure square tiles
+  geom_vline(xintercept = c(12.5, 24.5,36.5, 48.5, 60.5), linetype = "dashed", color = "black")   # Add vertical lines
+  
+```
+
 
 # Conclusion
