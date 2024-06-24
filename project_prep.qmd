@@ -39,7 +39,8 @@ However, with reference to @fig-old-vis-on-poster, only Sheet T11 *(Percent Chan
 Relevant columns for data processing include:
 
 -   `Variables`: Name of key items. These are separated into sub-categories such as "Food", "Clothing & Footwear", "Housing & Utilities", etc.
--   Date columns: These represent year-on-year CPI values for each Variable. The columns are named according to the corresponding year and month they represent, such as 2019 Jan, 2020 Jun, etc.
+
+-   `Date columns`: These represent year-on-year CPI values for each Variable. The columns are named according to the corresponding year and month they represent, such as 2019 Jan, 2020 Jun, etc.
 
 The following code loads the data from Sheet T11 in the CSV file, skipping the first 5 rows and removing any rows with NA values:
 
@@ -49,6 +50,8 @@ The following code loads the data from Sheet T11 in the CSV file, skipping the f
 # Load full data, select specific sheet (T11), skip first 5 rows and remove rows with NA values
 data <- read_excel("cpiapr24.xlsx", sheet = "T11", skip = 5) |>
   filter(if_all(everything(), ~ !is.na(.)))
+
+data
 ```
 
 The data is filtered to include only the relevant variables so as to focus on the specific categories visualised on the heat map:
@@ -128,7 +131,7 @@ pivoted_data
 plt <- ggplot(pivoted_data, aes(x = Date, y = Value, color = Variables)) +
   geom_line(aes(color = Variables), alpha = 0.1, linetype="dotted") + #  add the exact line graph (harsh)
   geom_smooth(method = "auto", se = FALSE, aes(group = Variables)) +  # Add a smooth curve
-  geom_point(aes(color=Variables), alpha=0.2) + #  add the exact data point
+  # geom_point(aes(color=Variables), alpha=0.2) + #  add the exact data point
   labs(
     title = "Inflation trend",
     x = "Date",
