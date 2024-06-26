@@ -150,9 +150,13 @@ pivoted_data$Date <- as.Date(paste(pivoted_data$Year, pivoted_data$Month, "01", 
 
 pivoted_data
 
+# Use Qualitative Color Palette for different categories. Use colors that are easily distinguishable with the white bg
+custom_colors <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22")
+
 plt <- ggplot(pivoted_data, aes(x = Date, y = Value, color = Variables)) +
   geom_line(aes(color = Variables), alpha = 0.1, linetype="dotted") + #  add the exact line graph (harsh)
-  geom_smooth(method = "auto", se = FALSE, aes(group = Variables)) +  # Add a smooth curve
+  scale_color_manual(values = custom_colors) +  
+  geom_smooth(method = "auto", se = FALSE, aes(group = Variables), linewidth = 0.5) +  # Add a smooth curve
   # geom_point(aes(color=Variables), alpha=0.2) + #  add the exact data point
   labs(
     title = "Inflation trend",
