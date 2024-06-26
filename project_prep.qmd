@@ -80,6 +80,13 @@ The data is then filtered to include only data from the base year onwards (2019)
 ```{r}
 #| label: filter-data-date
  
+# Filter the total inflation every year
+total_inf_data <- data |> 
+  filter(Variables %in% "All Items") |>
+  select(Variables, starts_with(c("2019", "2020", "2021", "2022", "2023"))) |>
+  # Convert selected columns to numeric
+  mutate_at(vars(starts_with(c("2019", "2020", "2021", "2022", "2023"))), as.numeric)
+
 # Filter the data to include only these categories and the months from 2019 onwards
 data <- data |>
   filter(Variables %in% categories) |>
@@ -112,10 +119,25 @@ pivoted_data <- pivot_longer(
   # To sort the data by Year, then by Month
   arrange(Year, Month)
 
+# Pivot the data for the total inflation
+pivoted_total_data <- pivot_longer(
+  total_inf_data, 
+  cols = starts_with(c("2019", "2020", "2021","2022", "2023")),
+  names_to = "Month_Year",
+  values_to = "Value"
+) |>
+  # Separate the Month column into Year and Month
+  separate(Month_Year, into = c("Year", "Month"), sep = " ") |>
+  # Convert Month column into numeric using mapping
+  mutate(Year = as.numeric(Year), Month = month_mapping[Month]) |>
+  # To sort the data by Year, then by Month
+  arrange(Year, Month)
+
 pivoted_data
+pivoted_total_data
 ```
 
-# Attempting to plot the above data using a line graph    
+# Attempting to plot the above data using a line graph
 
 ```{r}
 
@@ -136,13 +158,15 @@ plt <- ggplot(pivoted_data, aes(x = Date, y = Value, color = Variables)) +
     title = "Inflation trend",
     x = "Date",
     y = "Value"
-  ) +
+  ) + 
   theme_minimal()
 
 plt
 
 ```
+
 # Attempting to plot a heatmap using the preprocessed above
+
 ```{r}
 
 df_long <- 
@@ -180,5 +204,31 @@ ggplot(df_long, aes(x = Month, y = Variables, fill = Value)) +
   
 ```
 
+# Testing another chart
+
+```{r}
+pivoted_total_data$Date <- as.Date(paste(pivoted_total_data$Year, pivoted_total_data$Month, "01", sep = "-"))
+
+test_plot <- ggplot(pivoted_data, aes(x = Date, y = Value, fill = Variables)) +
+  geom_line() +
+  geom_bar(data = pivoted_total_data, aes(x = Date, y = Value), stat = "identity", fill = "grey") +
+  facet_wrap(~ Variables, scales = "free_y") + # Separate facets for each category
+  labs(title = "Trends vs Overall Average", x = "Year", y = "Value") +
+  theme_minimal()
+
+test_plot + scale_y_continuous(sec.axis = sec_axis(~./max(.)*max(pivoted_total_data$Value), name = "Average Inflation Rate")) +
+  coord_flip()
+
+test_plot
+```
+
+```{r}
+# Create the bar chart
+ggplot(pivoted_total_data, aes(x = Date, y = Value)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Bar Chart of Pivoted Total Data", x = "Category", y = "Inflation Rate") +
+  theme_minimal()
+
+```
 
 # Conclusion

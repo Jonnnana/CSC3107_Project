@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.553">
+<meta name="generator" content="quarto-1.4.555">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -129,226 +129,318 @@ Figure&nbsp;1: Heat map of inflationary impact on key items over 2023.
 <p>However, with reference to <a href="#fig-old-vis-on-poster" class="quarto-xref">Figure&nbsp;1</a>, only Sheet T11 <em>(Percent Change In Consumer Price Index (CPI) Over Corresponding Period Of Previous Year, 2019 As Base Year, Monthly)</em> will be used to accurately reflect the year-on-year data ordered by month as visualised in the heat map.</p>
 <p>Relevant columns for data processing include:</p>
 <ul>
-<li><code>Variables</code>: Name of key items. These are separated into sub-categories such as “Food”, “Clothing &amp; Footwear”, “Housing &amp; Utilities”, etc.</li>
-<li>Date columns: These represent year-on-year CPI values for each Variable. The columns are named according to the corresponding year and month they represent, such as 2019 Jan, 2020 Jun, etc.</li>
+<li><p><code>Variables</code>: Name of key items. These are separated into sub-categories such as “Food”, “Clothing &amp; Footwear”, “Housing &amp; Utilities”, etc.</p></li>
+<li><p><code>Date columns</code>: These represent year-on-year CPI values for each Variable. The columns are named according to the corresponding year and month they represent, such as 2019 Jan, 2020 Jun, etc.</p></li>
 </ul>
 <p>The following code loads the data from Sheet T11 in the CSV file, skipping the first 5 rows and removing any rows with NA values:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load full data, select specific sheet (T11), skip first 5 rows and remove rows with NA values</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"cpiapr24.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"T11"</span>, <span class="at">skip =</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">if_all</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="sc">!</span><span class="fu">is.na</span>(.)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">if_all</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="sc">!</span><span class="fu">is.na</span>(.)))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 152 × 749
+   Variables   `1962 Jan` `1962 Feb` `1962 Mar` `1962 Apr` `1962 May` `1962 Jun`
+   &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;     
+ 1 All Items   0.4        0.9        -0.7       0.5        1.1000000… 0.9       
+ 2 Food        0.5        1.5        -1.2       0.9        1.9        1.4       
+ 3 Food Excl … na         na         na         na         na         na        
+ 4 Bread &amp; Ce… na         na         na         na         na         na        
+ 5 Rice        na         na         na         na         na         na        
+ 6 Flour       na         na         na         na         na         na        
+ 7 Bread       na         na         na         na         na         na        
+ 8 Noodles &amp; … na         na         na         na         na         na        
+ 9 Biscuits &amp;… na         na         na         na         na         na        
+10 Cakes &amp; Pa… na         na         na         na         na         na        
+# ℹ 142 more rows
+# ℹ 742 more variables: `1962 Jul` &lt;chr&gt;, `1962 Aug` &lt;chr&gt;, `1962 Sep` &lt;chr&gt;,
+#   `1962 Oct` &lt;chr&gt;, `1962 Nov` &lt;chr&gt;, `1962 Dec` &lt;chr&gt;, `1963 Jan` &lt;chr&gt;,
+#   `1963 Feb` &lt;chr&gt;, `1963 Mar` &lt;chr&gt;, `1963 Apr` &lt;chr&gt;, `1963 May` &lt;chr&gt;,
+#   `1963 Jun` &lt;chr&gt;, `1963 Jul` &lt;chr&gt;, `1963 Aug` &lt;chr&gt;, `1963 Sep` &lt;chr&gt;,
+#   `1963 Oct` &lt;chr&gt;, `1963 Nov` &lt;chr&gt;, `1963 Dec` &lt;chr&gt;, `1964 Jan` &lt;chr&gt;,
+#   `1964 Feb` &lt;chr&gt;, `1964 Mar` &lt;chr&gt;, `1964 Apr` &lt;chr&gt;, `1964 May` &lt;chr&gt;, …</code></pre>
+</div>
 </div>
 <p>The data is filtered to include only the relevant variables so as to focus on the specific categories visualised on the heat map:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the data to include only these categories</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>categories <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Food"</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Food Excl Food Serving Services"</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Clothing &amp; Footwear"</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Housing &amp; Utilities"</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Household Durables &amp; Services"</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Health Care"</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Transport"</span>,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Communication"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Recreation &amp; Culture"</span>,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Education"</span>,</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Miscellaneous Goods &amp; Services"</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the data to include only these categories</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>categories <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Food"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">#  "Food Excl Food Serving Services", #  Temporary commented out</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Clothing &amp; Footwear"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Housing &amp; Utilities"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Household Durables &amp; Services"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Health Care"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Transport"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Communication"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Recreation &amp; Culture"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Education"</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">#  "Miscellaneous Goods &amp; Services" #  Temporary commented out</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The data is then filtered to include only data from the base year onwards (2019). This is done to narrow down the size of the dataset for easier management and faster performance, as well as to ensure the dataset’s consistency with the base year:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the data to include only these categories and the months from 2019 onwards</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Variables <span class="sc">%in%</span> categories) <span class="sc">|&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Variables, <span class="fu">starts_with</span>(<span class="st">"2019"</span>), <span class="fu">starts_with</span>(<span class="st">"2020"</span>), <span class="fu">starts_with</span>(<span class="st">"2021"</span>), <span class="fu">starts_with</span>(<span class="st">"2022"</span>), <span class="fu">starts_with</span>(<span class="st">"2023"</span>))</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the filtered data</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">max.print =</span> <span class="fl">1e6</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(data, <span class="at">n =</span> <span class="fu">nrow</span>(data), <span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the data to include only these categories and the months from 2019 onwards</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Variables <span class="sc">%in%</span> categories) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Variables, <span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"2019"</span>, <span class="st">"2020"</span>, <span class="st">"2021"</span>, <span class="st">"2022"</span>, <span class="st">"2023"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert selected columns to numeric</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(<span class="fu">vars</span>(<span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"2019"</span>, <span class="st">"2020"</span>, <span class="st">"2021"</span>, <span class="st">"2022"</span>, <span class="st">"2023"</span>))), as.numeric)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the filtered data</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">max.print =</span> <span class="fl">1e6</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(data, <span class="at">n =</span> <span class="fu">nrow</span>(data), <span class="at">width =</span> <span class="cn">Inf</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 11 × 61
-   Variables                       `2019 Jan`          `2019 Feb` `2019 Mar`
-   &lt;chr&gt;                           &lt;chr&gt;               &lt;chr&gt;      &lt;chr&gt;     
- 1 Food                            1.6                 1.5        1.7       
- 2 Food Excl Food Serving Services 1.3                 0.9        1.5       
- 3 Clothing &amp; Footwear             3.1                 1.7        0.7       
- 4 Housing &amp; Utilities             -0.6                -0.6       -0.5      
- 5 Household Durables &amp; Services   0.8                 1          0.7       
- 6 Health Care                     2                   1.9        1.8       
- 7 Transport                       -2.2000000000000002 -1.4       -0.5      
- 8 Communication                   -2.2999999999999998 -1.8       -0.3      
- 9 Recreation &amp; Culture            1                   1.2        2         
-10 Education                       3.2                 2.6        2.6       
-11 Miscellaneous Goods &amp; Services  1.3                 1.3        -0.2      
-   `2019 Apr`          `2019 May` `2019 Jun`         `2019 Jul`        
-   &lt;chr&gt;               &lt;chr&gt;      &lt;chr&gt;              &lt;chr&gt;             
- 1 1.5                 1.5        1.4                1.3               
- 2 1.2                 1.2        0.8                0.5               
- 3 -1.1000000000000001 -0.7       -0.7               -2.9              
- 4 -0.7                -0.8       -0.9               -1.3              
- 5 1.5                 1.2        1.1000000000000001 0.7               
- 6 1.4                 1.5        1                  1.1000000000000001
- 7 1.8                 1.8        0.4                0.4               
- 8 -0.1                -1.4       -1.9               -2.6              
- 9 2.1                 1.6        1.6                0.9               
-10 2.5                 2.5        2.5                2.2999999999999998
-11 -0.1                0.3        0.4                0.4               
-   `2019 Aug`         `2019 Sep`          `2019 Oct` `2019 Nov`         
-   &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;      &lt;chr&gt;              
- 1 1.6                1.5                 1.6        1.6                
- 2 1.2                1.1000000000000001  1.4        1.3                
- 3 -3.5               -1.1000000000000001 -1.9       -1.1000000000000001
- 4 -1.4               -1.3                -1.3       -1.3               
- 5 0.7                0.4                 0.2        0.5                
- 6 0.9                1.2                 1          0.1                
- 7 1.2                0.8                 1.6        2.2000000000000002 
- 8 -0.5               -1.1000000000000001 -0.9       0.8                
- 9 0.5                0.5                 0.6        0.9                
-10 2.2000000000000002 2                   2          2.1                
-11 0.2                0.1                 0.2        0.3                
-   `2019 Dec`          `2020 Jan` `2020 Feb` `2020 Mar` `2020 Apr`
-   &lt;chr&gt;                    &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;chr&gt;     
- 1 1.7                        1.7        1.6        1.5 2.1       
- 2 1.4                        1.8        1.8        1.6 3.5       
- 3 -1.7                      -3.8       -2.7       -2.8 -3.2      
- 4 -1.1000000000000001       -0.4       -0.2       -0.1 0.1       
- 5 0.6                        0.4        0.4        0.5 -0.2      
- 6 -0.6                      -1.3       -1.5       -1.8 -1.8      
- 7 3.1                        4.2        1.7        0.1 -4        
- 8 1.2                        0.7        1.1       -0.2 -0.6      
- 9 0.1                        0.5       -1.5       -1.8 -2.8      
-10 2.2999999999999998        -0.6       -0.5       -0.5 -0.6      
-11 0.3                       -0.2        0         -0.2 -0.9      
-   `2020 May`          `2020 Jun`         `2020 Jul`          `2020 Aug`
-   &lt;chr&gt;               &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;     
- 1 2.2000000000000002  2.2999999999999998 2.2000000000000002  1.8       
- 2 4                   4.4000000000000004 4                   3.3       
- 3 -4.4000000000000004 -3.2               -4.0999999999999996 -3.3      
- 4 0.1                 0.2                -0.8                -0.7      
- 5 -0.4                0                  0.2                 0.3       
- 6 -1.9                -1.7               -1.9                -1.9      
- 7 -4.8                -3.1               -1.4                -1.5      
- 8 -0.5                0                  1.4                 1.9       
- 9 -2                  -2.9               -2.2999999999999998 -1.4      
-10 -0.6                -0.6               -0.7                -0.7      
-11 -1.4                -1.9               -1.7                -1.9      
-   `2020 Sep`          `2020 Oct` `2020 Nov` `2020 Dec`         
-   &lt;chr&gt;               &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;              
- 1 1.8                 1.7        1.8        1.6                
- 2 3.1                 2.5        2.6        2.2999999999999998 
- 3 -4.5999999999999996 -4.3       -5.8       -4.0999999999999996
- 4 -0.7                -0.3       -0.3       -0.2               
- 5 0.7                 0.7        0.4        0.5                
- 6 -2                  -1.7       -0.5       -0.4               
- 7 0.5                 -0.6       -0.4       0.6                
- 8 2                   0.8        0.8        0.7                
- 9 -1.2                -2         -1.9       -2.2000000000000002
-10 -0.3                -0.7       -0.8       -1                 
-11 -1.4                -1.3       -1.7       -1.4               
-   `2021 Jan`          `2021 Feb` `2021 Mar`          `2021 Apr`         
-   &lt;chr&gt;               &lt;chr&gt;      &lt;chr&gt;               &lt;chr&gt;              
- 1 1.5                 1.6        1.4                 1                  
- 2 2                   2.6        2.2000000000000002  0.6                
- 3 -4.5999999999999996 -6.3       -4.8                -4.9000000000000004
- 4 -0.3                -0.3       -0.2                0.5                
- 5 1                   1          1.2                 1.2                
- 6 -0.1                -0.2       1                   0.9                
- 7 0.7                 3.1        5.7                 9.6999999999999993 
- 8 1.2                 0.6        0.8                 -0.3               
- 9 -1.2                0.1        0.3                 0.8                
-10 0.7                 1          1                   1                  
-11 -1.5                -1.4       -1.1000000000000001 -0.3               
-   `2021 May`          `2021 Jun`         `2021 Jul`         `2021 Aug`         
-   &lt;chr&gt;               &lt;chr&gt;              &lt;chr&gt;              &lt;chr&gt;              
- 1 1                   0.9                1.1000000000000001 1.5                
- 2 0.6                 0.1                0.7                1.4                
- 3 -4.0999999999999996 -9                 -5.5               -6.2               
- 4 0.6                 0.8                1.9                2.2000000000000002 
- 5 1.6                 1.5                1.6                1.6                
- 6 1                   1.1000000000000001 1.6                1.7                
- 7 11                  11.1               9.6                8.3000000000000007 
- 8 0.4                 0.2                -1.5               -2.2000000000000002
- 9 1                   1.1000000000000001 1.4                1.4                
-10 1                   1.3                1.4                1.3                
-11 -0.3                -0.1               -0.7               -0.1               
-   `2021 Sep`          `2021 Oct` `2021 Nov` `2021 Dec` `2022 Jan`         
-   &lt;chr&gt;               &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;              
- 1 1.6                 1.7        1.9        2.1        2.6                
- 2 1.6                 2.1        2.5        3          3.5                
- 3 -5                  -3.2       -6.6       -6.2       -4.4000000000000004
- 4 2.2999999999999998  2.7        3.1        3.4        4.0999999999999996 
- 5 1.5                 1.6        1.8        2          1.7                
- 6 1.8                 1.7        1.5        1.5        1.7                
- 7 8.3000000000000007  11.1       14.2       13.7       12.7               
- 8 -2.2000000000000002 -1.6       -1.2       -1.2       -2                 
- 9 1.5                 2.1        2          1.9        1.3                
-10 1.2                 1.6        1.6        2          2.2000000000000002 
-11 -0.3                -0.6       -0.1       0          -0.2               
-   `2022 Feb`         `2022 Mar`         `2022 Apr`         `2022 May`        
-   &lt;chr&gt;              &lt;chr&gt;              &lt;chr&gt;              &lt;chr&gt;             
- 1 2.2999999999999998 3.3                4.0999999999999996 4.5               
- 2 2                  3.5                4.5                4.5               
- 3 -2.8               -3.3               0.8                2.2000000000000002
- 4 4.0999999999999996 4.4000000000000004 5                  5                 
- 5 1.7                1.6                2                  2.1               
- 6 1.9                1.1000000000000001 1.6                1.3               
- 7 14.8               18.7               15.5               15.5              
- 8 -3.1               -2.6               -0.9               -0.8              
- 9 0.8                2.2000000000000002 2.7                3.5               
-10 2                  2                  2                  2.4               
-11 0.1                0.3                0.1                0                 
-   `2022 Jun`          `2022 Jul`         `2022 Aug`          `2022 Sep`        
-   &lt;chr&gt;               &lt;chr&gt;              &lt;chr&gt;               &lt;chr&gt;             
- 1 5.4                 6.1                6.4                 6.9               
- 2 5.6                 6.1                6.3                 6.8               
- 3 5.5                 6.6                8.6999999999999993  6                 
- 4 5.2                 5.9                6                   6.2               
- 5 2.1                 1.9                2.2000000000000002  2.2999999999999998
- 6 1.9                 2.7                2.7                 2.8               
- 7 18.8                19                 20.2                19                
- 8 -1.1000000000000001 -1.3               -1.1000000000000001 0                 
- 9 5.0999999999999996  4.9000000000000004 5.9                 6.1               
-10 2.2000000000000002  2.2000000000000002 2.2000000000000002  2.1               
-11 0.4                 0.4                0.2                 0.8               
-   `2022 Oct` `2022 Nov` `2022 Dec`         `2023 Jan` `2023 Feb`        
-   &lt;chr&gt;      &lt;chr&gt;      &lt;chr&gt;              &lt;chr&gt;      &lt;chr&gt;             
- 1 7.1        7.3        7.5                8.1        8.1               
- 2 6.8        6.7        7.1                7.2        7.5               
- 3 3.2        6.7        6                  6.9        7.1               
- 4 5.9        5.6        5.5                5.4        5.3               
- 5 2.4        2.4        2                  2.8        2.7               
- 6 2.8        2.7        3                  4          4                 
- 7 15.5       14.9       12.7               11.9       9.6999999999999993
- 8 -0.1       -0.7       -0.7               0.6        2.9               
- 9 5.6        5.8        7.5                6.7        6.9               
-10 2          1.9        2.1                3          2.9               
-11 0.9        1.5        1.1000000000000001 2.1        2.6               
-   `2023 Mar` `2023 Apr` `2023 May` `2023 Jun` `2023 Jul` `2023 Aug` `2023 Sep`
-        &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
- 1        7.7        7.1        6.8        5.9        5.3        4.8        4.3
- 2        7.4        6.4        6.7        5.1        4.6        4.4        3.5
- 3        6.3        5.6        4.1        4          0.6       -0.5       -1.7
- 4        5.2        4.5        4.4        4.3        3.9        3.8        3.7
- 5        2.4        1.9        1.6        2.1        2.3        1.5        1.5
- 6        4          4.2        4.6        5          4          4.3        4.5
- 7        6.2        8.6        6          4.6        3.7        4.8        6.3
- 8        2.7        2.7        3          2.5        3.3        2.2        3.6
- 9        6.8        7.6        6.4        5.7        6.5        5.1        4.3
-10        3          3          2.6        2.6        2.6        2.6        2.4
-11        3          3.1        3.6        3.2        4          4.2        2.6
-   `2023 Oct` `2023 Nov` `2023 Dec`
-        &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
- 1        4.1        4          3.7
- 2        3.4        3.5        2.5
- 3       -0.1       -0.5       -1  
- 4        3.9        3.8        3.8
- 5        1.3        1          1.5
- 6        5.2        5.1        5.1
- 7        8.4        2.8        3.9
- 8        3.6        4          3.9
- 9        5.8        5.6        6.3
-10        2.7        2.7        2.6
-11        3.4        2.8        2.3</code></pre>
+<pre><code># A tibble: 9 × 61
+  Variables                     `2019 Jan` `2019 Feb` `2019 Mar` `2019 Apr`
+  &lt;chr&gt;                              &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1 Food                                 1.6        1.5        1.7        1.5
+2 Clothing &amp; Footwear                  3.1        1.7        0.7       -1.1
+3 Housing &amp; Utilities                 -0.6       -0.6       -0.5       -0.7
+4 Household Durables &amp; Services        0.8        1          0.7        1.5
+5 Health Care                          2          1.9        1.8        1.4
+6 Transport                           -2.2       -1.4       -0.5        1.8
+7 Communication                       -2.3       -1.8       -0.3       -0.1
+8 Recreation &amp; Culture                 1          1.2        2          2.1
+9 Education                            3.2        2.6        2.6        2.5
+  `2019 May` `2019 Jun` `2019 Jul` `2019 Aug` `2019 Sep` `2019 Oct` `2019 Nov`
+       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1        1.5        1.4        1.3        1.6        1.5        1.6        1.6
+2       -0.7       -0.7       -2.9       -3.5       -1.1       -1.9       -1.1
+3       -0.8       -0.9       -1.3       -1.4       -1.3       -1.3       -1.3
+4        1.2        1.1        0.7        0.7        0.4        0.2        0.5
+5        1.5        1          1.1        0.9        1.2        1          0.1
+6        1.8        0.4        0.4        1.2        0.8        1.6        2.2
+7       -1.4       -1.9       -2.6       -0.5       -1.1       -0.9        0.8
+8        1.6        1.6        0.9        0.5        0.5        0.6        0.9
+9        2.5        2.5        2.3        2.2        2          2          2.1
+  `2019 Dec` `2020 Jan` `2020 Feb` `2020 Mar` `2020 Apr` `2020 May` `2020 Jun`
+       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1        1.7        1.7        1.6        1.5        2.1        2.2        2.3
+2       -1.7       -3.8       -2.7       -2.8       -3.2       -4.4       -3.2
+3       -1.1       -0.4       -0.2       -0.1        0.1        0.1        0.2
+4        0.6        0.4        0.4        0.5       -0.2       -0.4        0  
+5       -0.6       -1.3       -1.5       -1.8       -1.8       -1.9       -1.7
+6        3.1        4.2        1.7        0.1       -4         -4.8       -3.1
+7        1.2        0.7        1.1       -0.2       -0.6       -0.5        0  
+8        0.1        0.5       -1.5       -1.8       -2.8       -2         -2.9
+9        2.3       -0.6       -0.5       -0.5       -0.6       -0.6       -0.6
+  `2020 Jul` `2020 Aug` `2020 Sep` `2020 Oct` `2020 Nov` `2020 Dec` `2021 Jan`
+       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1        2.2        1.8        1.8        1.7        1.8        1.6        1.5
+2       -4.1       -3.3       -4.6       -4.3       -5.8       -4.1       -4.6
+3       -0.8       -0.7       -0.7       -0.3       -0.3       -0.2       -0.3
+4        0.2        0.3        0.7        0.7        0.4        0.5        1  
+5       -1.9       -1.9       -2         -1.7       -0.5       -0.4       -0.1
+6       -1.4       -1.5        0.5       -0.6       -0.4        0.6        0.7
+7        1.4        1.9        2          0.8        0.8        0.7        1.2
+8       -2.3       -1.4       -1.2       -2         -1.9       -2.2       -1.2
+9       -0.7       -0.7       -0.3       -0.7       -0.8       -1          0.7
+  `2021 Feb` `2021 Mar` `2021 Apr` `2021 May` `2021 Jun` `2021 Jul` `2021 Aug`
+       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1        1.6        1.4        1          1          0.9        1.1        1.5
+2       -6.3       -4.8       -4.9       -4.1       -9         -5.5       -6.2
+3       -0.3       -0.2        0.5        0.6        0.8        1.9        2.2
+4        1          1.2        1.2        1.6        1.5        1.6        1.6
+5       -0.2        1          0.9        1          1.1        1.6        1.7
+6        3.1        5.7        9.7       11         11.1        9.6        8.3
+7        0.6        0.8       -0.3        0.4        0.2       -1.5       -2.2
+8        0.1        0.3        0.8        1          1.1        1.4        1.4
+9        1          1          1          1          1.3        1.4        1.3
+  `2021 Sep` `2021 Oct` `2021 Nov` `2021 Dec` `2022 Jan` `2022 Feb` `2022 Mar`
+       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1        1.6        1.7        1.9        2.1        2.6        2.3        3.3
+2       -5         -3.2       -6.6       -6.2       -4.4       -2.8       -3.3
+3        2.3        2.7        3.1        3.4        4.1        4.1        4.4
+4        1.5        1.6        1.8        2          1.7        1.7        1.6
+5        1.8        1.7        1.5        1.5        1.7        1.9        1.1
+6        8.3       11.1       14.2       13.7       12.7       14.8       18.7
+7       -2.2       -1.6       -1.2       -1.2       -2         -3.1       -2.6
+8        1.5        2.1        2          1.9        1.3        0.8        2.2
+9        1.2        1.6        1.6        2          2.2        2          2  
+  `2022 Apr` `2022 May` `2022 Jun` `2022 Jul` `2022 Aug` `2022 Sep` `2022 Oct`
+       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1        4.1        4.5        5.4        6.1        6.4        6.9        7.1
+2        0.8        2.2        5.5        6.6        8.7        6          3.2
+3        5          5          5.2        5.9        6          6.2        5.9
+4        2          2.1        2.1        1.9        2.2        2.3        2.4
+5        1.6        1.3        1.9        2.7        2.7        2.8        2.8
+6       15.5       15.5       18.8       19         20.2       19         15.5
+7       -0.9       -0.8       -1.1       -1.3       -1.1        0         -0.1
+8        2.7        3.5        5.1        4.9        5.9        6.1        5.6
+9        2          2.4        2.2        2.2        2.2        2.1        2  
+  `2022 Nov` `2022 Dec` `2023 Jan` `2023 Feb` `2023 Mar` `2023 Apr` `2023 May`
+       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1        7.3        7.5        8.1        8.1        7.7        7.1        6.8
+2        6.7        6          6.9        7.1        6.3        5.6        4.1
+3        5.6        5.5        5.4        5.3        5.2        4.5        4.4
+4        2.4        2          2.8        2.7        2.4        1.9        1.6
+5        2.7        3          4          4          4          4.2        4.6
+6       14.9       12.7       11.9        9.7        6.2        8.6        6  
+7       -0.7       -0.7        0.6        2.9        2.7        2.7        3  
+8        5.8        7.5        6.7        6.9        6.8        7.6        6.4
+9        1.9        2.1        3          2.9        3          3          2.6
+  `2023 Jun` `2023 Jul` `2023 Aug` `2023 Sep` `2023 Oct` `2023 Nov` `2023 Dec`
+       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+1        5.9        5.3        4.8        4.3        4.1        4          3.7
+2        4          0.6       -0.5       -1.7       -0.1       -0.5       -1  
+3        4.3        3.9        3.8        3.7        3.9        3.8        3.8
+4        2.1        2.3        1.5        1.5        1.3        1          1.5
+5        5          4          4.3        4.5        5.2        5.1        5.1
+6        4.6        3.7        4.8        6.3        8.4        2.8        3.9
+7        2.5        3.3        2.2        3.6        3.6        4          3.9
+8        5.7        6.5        5.1        4.3        5.8        5.6        6.3
+9        2.6        2.6        2.6        2.4        2.7        2.7        2.6</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a month mapping</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>month_mapping <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Jan"</span> <span class="ot">=</span> <span class="dv">1</span>, <span class="st">"Feb"</span> <span class="ot">=</span> <span class="dv">2</span>, <span class="st">"Mar"</span> <span class="ot">=</span> <span class="dv">3</span>, <span class="st">"Apr"</span> <span class="ot">=</span> <span class="dv">4</span>, <span class="st">"May"</span> <span class="ot">=</span> <span class="dv">5</span>, <span class="st">"Jun"</span> <span class="ot">=</span> <span class="dv">6</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Jul"</span> <span class="ot">=</span> <span class="dv">7</span>, <span class="st">"Aug"</span> <span class="ot">=</span> <span class="dv">8</span>, <span class="st">"Sep"</span> <span class="ot">=</span> <span class="dv">9</span>, <span class="st">"Oct"</span> <span class="ot">=</span> <span class="dv">10</span>, <span class="st">"Nov"</span> <span class="ot">=</span> <span class="dv">11</span>, <span class="st">"Dec"</span> <span class="ot">=</span> <span class="dv">12</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot the data frame</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>pivoted_data <span class="ot">&lt;-</span> <span class="fu">pivot_longer</span>(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  data, </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">cols =</span> <span class="fu">starts_with</span>(<span class="fu">c</span>(<span class="st">"2019"</span>, <span class="st">"2020"</span>, <span class="st">"2021"</span>,<span class="st">"2022"</span>, <span class="st">"2023"</span>)),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">names_to =</span> <span class="st">"Month_Year"</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">values_to =</span> <span class="st">"Value"</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Separate the Month column into Year and Month</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(Month_Year, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"Year"</span>, <span class="st">"Month"</span>), <span class="at">sep =</span> <span class="st">" "</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Convert Month column into numeric using mapping</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Year =</span> <span class="fu">as.numeric</span>(Year), <span class="at">Month =</span> month_mapping[Month]) <span class="sc">|&gt;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># To sort the data by Year, then by Month</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Year, Month)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>pivoted_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 540 × 4
+   Variables                      Year Month Value
+   &lt;chr&gt;                         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+ 1 Food                           2019     1   1.6
+ 2 Clothing &amp; Footwear            2019     1   3.1
+ 3 Housing &amp; Utilities            2019     1  -0.6
+ 4 Household Durables &amp; Services  2019     1   0.8
+ 5 Health Care                    2019     1   2  
+ 6 Transport                      2019     1  -2.2
+ 7 Communication                  2019     1  -2.3
+ 8 Recreation &amp; Culture           2019     1   1  
+ 9 Education                      2019     1   3.2
+10 Food                           2019     2   1.5
+# ℹ 530 more rows</code></pre>
+</div>
+</div>
+</section>
+<section id="attempting-to-plot-the-above-data-using-a-line-graph" class="level1">
+<h1>Attempting to plot the above data using a line graph</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| line-graph-plot</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  Maybe it's something to build upon?</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Month and Year to a combined date variable for X-axis</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>pivoted_data<span class="sc">$</span>Date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="fu">paste</span>(pivoted_data<span class="sc">$</span>Year, pivoted_data<span class="sc">$</span>Month, <span class="st">"01"</span>, <span class="at">sep =</span> <span class="st">"-"</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>pivoted_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 540 × 5
+   Variables                      Year Month Value Date      
+   &lt;chr&gt;                         &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;date&gt;    
+ 1 Food                           2019     1   1.6 2019-01-01
+ 2 Clothing &amp; Footwear            2019     1   3.1 2019-01-01
+ 3 Housing &amp; Utilities            2019     1  -0.6 2019-01-01
+ 4 Household Durables &amp; Services  2019     1   0.8 2019-01-01
+ 5 Health Care                    2019     1   2   2019-01-01
+ 6 Transport                      2019     1  -2.2 2019-01-01
+ 7 Communication                  2019     1  -2.3 2019-01-01
+ 8 Recreation &amp; Culture           2019     1   1   2019-01-01
+ 9 Education                      2019     1   3.2 2019-01-01
+10 Food                           2019     2   1.5 2019-02-01
+# ℹ 530 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plt <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pivoted_data, <span class="fu">aes</span>(<span class="at">x =</span> Date, <span class="at">y =</span> Value, <span class="at">color =</span> Variables)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">color =</span> Variables), <span class="at">alpha =</span> <span class="fl">0.1</span>, <span class="at">linetype=</span><span class="st">"dotted"</span>) <span class="sc">+</span> <span class="co">#  add the exact line graph (harsh)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"auto"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="fu">aes</span>(<span class="at">group =</span> Variables)) <span class="sc">+</span>  <span class="co"># Add a smooth curve</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># geom_point(aes(color=Variables), alpha=0.2) + #  add the exact data point</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Inflation trend"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Date"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Value"</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>plt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using method = 'loess' and formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_prep_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="attempting-to-plot-a-heatmap-using-the-preprocessed-above" class="level1">
+<h1>Attempting to plot a heatmap using the preprocessed above</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df_long <span class="ot">&lt;-</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(data, <span class="at">cols =</span> <span class="sc">-</span>Variables, <span class="at">names_to =</span> <span class="st">"Month"</span>, <span class="at">values_to =</span> <span class="st">"Value"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 540 × 3
+   Variables Month    Value
+   &lt;chr&gt;     &lt;chr&gt;    &lt;dbl&gt;
+ 1 Food      2019 Jan   1.6
+ 2 Food      2019 Feb   1.5
+ 3 Food      2019 Mar   1.7
+ 4 Food      2019 Apr   1.5
+ 5 Food      2019 May   1.5
+ 6 Food      2019 Jun   1.4
+ 7 Food      2019 Jul   1.3
+ 8 Food      2019 Aug   1.6
+ 9 Food      2019 Sep   1.5
+10 Food      2019 Oct   1.6
+# ℹ 530 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame for the year labels and vertical lines</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>years <span class="ot">&lt;-</span> <span class="fu">unique</span>(df_long<span class="sc">$</span>Year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Unknown or uninitialised column: `Year`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>year_positions <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">12.5</span>, <span class="at">by =</span> <span class="dv">12</span>, <span class="at">length.out =</span> <span class="fu">length</span>(years))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>year_labels <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Year =</span> years,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">x_position =</span> <span class="fu">seq</span>(<span class="fl">6.5</span>, <span class="at">by =</span> <span class="dv">12</span>, <span class="at">length.out =</span> <span class="fu">length</span>(years))  <span class="co"># Adjust x_position for year labels</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df_long, <span class="fu">aes</span>(<span class="at">x =</span> Month, <span class="at">y =</span> Variables, <span class="at">fill =</span> Value)) <span class="sc">+</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_gradient2</span>(<span class="at">name =</span> <span class="st">"Inflation Rate</span><span class="sc">\n</span><span class="st">Percentage Change"</span>,</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">low =</span> <span class="st">"red"</span>,  <span class="co"># Red (low end)</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>                       <span class="at">mid =</span> <span class="st">"white"</span>,    <span class="co"># White (midpoint)</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>                       <span class="at">high =</span> <span class="st">"blue"</span>, <span class="co"># blue (high end)</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>                       <span class="at">midpoint =</span> <span class="dv">0</span>,     <span class="co"># Set midpoint to 0</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>                       <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">10</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">7</span>),  <span class="co"># Specify breaks</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>                       <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"20"</span>, <span class="st">"10"</span>, <span class="st">"0"</span>, <span class="st">"-7"</span>),  <span class="co"># Specify labels</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>                       ) <span class="sc">+</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Years"</span>, <span class="at">y =</span> <span class="st">"Variables"</span>, <span class="at">title =</span> <span class="st">"Heatmap of Variables by Month"</span>) <span class="sc">+</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>,  <span class="co"># Move legend to the top</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>),  <span class="co"># Center plot title</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>()  <span class="co"># Remove x-axis text</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="at">ratio =</span> <span class="dv">5</span>) <span class="sc">+</span>  <span class="co"># Ensure square tiles</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">c</span>(<span class="fl">12.5</span>, <span class="fl">24.5</span>,<span class="fl">36.5</span>, <span class="fl">48.5</span>, <span class="fl">60.5</span>), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"black"</span>)   <span class="co"># Add vertical lines</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="project_prep_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
