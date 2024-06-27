@@ -4,6 +4,7 @@ format:
     poster-typst:
         size: "33x23"
         poster-authors: "Chua Joshua, Lim Joshua, Ong Zi Xuan Max, Ray Lim Le Hao, Sherwyn Tan Wee Wen, Tan Jia Wen"
+        departments: "Information and Communication Technologies"
         institution-logo: "./images/sit-logo.png"
         footer-text: "Information Visualization 2024"
 execute:
@@ -80,7 +81,11 @@ We used the Quarto publication framework and the R programming language, along w
 
 # Further Suggestions for Interactivity
 
-Because our visualization was intended for a poster, we did not implement any interactive features, including the infotip. However, if the data are visualized in an HTML document, interactive features can be achieved using the R packages such as *plotly*. In that case, we recommend that the tile does not change its fill color. In contrast, the original visualization changes the fill color of the activated tile to light blue (see @fig-infotip_color_change), which can be misinterpreted as a change in incidence. Instead, we suggest highlighting the activated tile by thickening its border.
+As our visualisation was to be non-interactive for a poster, we did not implement any interactive features. However, if the visualization were to be interactive, a few features would be considered. They are as follows:
+
+1.  *Interactive plots* for the users to potentially select the number of years they would like to view for the inflation rate over the past few years. This can be achieved with the *plotly* library in R which helps to embed interactivity into web applications.
+2.  *A dashboard* for users to interact with various elements of our chart to display the data that they want to see. This can be accomplished with the *shiny* library in R which helps to build complex dashboards and applications that display interactive plots, tables and other UI elements.
+3.  Another library to help with interactivity would be *highcharter* which makes use of the Highcharts JavaScript library to provide a simple interface to generate sophisticated and highly customizable charts.
 
 # Conclusion
 
