@@ -235,4 +235,36 @@ ggplot(pivoted_total_data, aes(x = Date, y = Value)) +
 
 ```
 
+# Test scatter plot with trend line
+```{r}
+#| label: scatter-plot-visualization
+#| fig.width: 12
+#| fig.height: 8
+
+# Convert Month and Year to a combined date variable for X-axis
+pivoted_data$Date <- as.Date(paste(pivoted_data$Year, pivoted_data$Month, "01", sep = "-"))
+
+# Create scatter plot
+scatter_plot <- ggplot(pivoted_data, aes(x = Date, y = Value, color = Variables)) +
+  geom_point(alpha = 0.6, size = 2) +  # Adjusted point size for better visibility
+  geom_smooth(method = "lm", se = FALSE, linetype = "dashed", linewidth = 1) + # Adjusted line width for clarity
+  scale_color_manual(values = custom_colors) +  
+  labs(
+    title = "Scatter Plot of Year-on-Year CPI Changes by Category",
+    x = "Date",
+    y = "CPI Change (%)"
+  ) + 
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.title = element_text(size = 14),
+    legend.text = element_text(size = 12),
+    legend.position = "right"
+  )
+
+scatter_plot
+```
+
 # Conclusion
