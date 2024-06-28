@@ -134,7 +134,7 @@ pivoted_data <- pivot_longer(
 #   arrange(Year, Month)
 
 # pivoted_data
-pivoted_total_data
+# pivoted_total_data
 ```
 
 # Find the average between other years except 2023
