@@ -52,16 +52,16 @@ categories <- c(
 # Filter the total inflation every year
 total_inf_data <- data |> 
   filter(Variables %in% "All Items") |>
-  select(Variables, starts_with(c("2019", "2020", "2021", "2022", "2023"))) |>
+  select(Variables, starts_with(c("2020", "2021", "2022", "2023"))) |>
   # Convert selected columns to numeric
-  mutate_at(vars(starts_with(c("2019", "2020", "2021", "2022", "2023"))), as.numeric)
+  mutate_at(vars(starts_with(c("2020", "2021", "2022", "2023"))), as.numeric)
 
 # Filter the data to include only these categories and the months from 2019 onwards
 data <- data |>
   filter(Variables %in% categories) |>
-  select(Variables, starts_with(c("2019", "2020", "2021", "2022", "2023"))) |>
+  select(Variables, starts_with(c("2020", "2021", "2022", "2023"))) |>
   # Convert selected columns to numeric
-  mutate_at(vars(starts_with(c("2019", "2020", "2021", "2022", "2023"))), as.numeric)
+  mutate_at(vars(starts_with(c("2020", "2021", "2022", "2023"))), as.numeric)
 
 # Print the filtered data
 options(max.print = 1e6)
@@ -89,21 +89,94 @@ pivoted_data <- pivot_longer(
   arrange(Year, Month)
 
 # Pivot the data for the total inflation
-pivoted_total_data <- pivot_longer(
-  total_inf_data, 
-  cols = starts_with(c("2019", "2020", "2021","2022", "2023")),
-  names_to = "Month_Year",
-  values_to = "Value"
-) |>
-  # Separate the Month column into Year and Month
-  separate(Month_Year, into = c("Year", "Month"), sep = " ") |>
-  # Convert Month column into numeric using mapping
-  mutate(Year = as.numeric(Year), Month = month_mapping[Month]) |>
-  # To sort the data by Year, then by Month
-  arrange(Year, Month)
+# pivoted_total_data <- pivot_longer(
+#   total_inf_data, 
+#   cols = starts_with(c("2019", "2020", "2021","2022", "2023")),
+#   names_to = "Month_Year",
+#   values_to = "Value"
+# ) |>
+#   # Separate the Month column into Year and Month
+#   separate(Month_Year, into = c("Year", "Month"), sep = " ") |>
+#   # Convert Month column into numeric using mapping
+#   mutate(Year = as.numeric(Year), Month = month_mapping[Month]) |>
+#   # To sort the data by Year, then by Month
+#   arrange(Year, Month)
 
-pivoted_data
+# pivoted_data
 pivoted_total_data
+
+
+## -----------------------------------------------------------------------------
+#| label: find-average-except-2023
+
+month_dates <- unique(pivoted_data$Month)
+month_dates
+
+# month_order <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+# Find the average of the other years except 2023
+pivoted_data_except_2023 <- pivoted_data |>
+  filter(Year != 2023)
+
+pivoted_data_except_2023
+
+average_prices_except_2023 <- pivoted_data_except_2023 |>
+  group_by(Variables, Month) |>
+  summarize(average_Value = mean(Value)) |>
+  arrange(Variables, Month) 
+
+# average_prices_except_2023$Month <- factor(average_prices_except_2023$Month, levels = month_order)
+
+average_prices_except_2023 |> 
+  arrange(Variables, Month)
+
+
+
+## -----------------------------------------------------------------------------
+#| label: process-2023-data
+
+pivoted_data_2023 <- pivoted_data |>
+  filter(Year == 2023)
+
+pivoted_data_2023 |> 
+  arrange(Variables, Month)
+
+pivoted_data_2023$Year <- NULL
+
+pivoted_data_2023
+
+
+## -----------------------------------------------------------------------------
+#| label: combine-data
+
+combined_data <- inner_join(average_prices_except_2023, pivoted_data_2023, by = c("Variables", "Month")) |>
+  rename(Value_Average = average_Value, Value_2023 = Value) 
+  
+# combined_data$Month <- factor(combined_data$Month, levels = month_order)
+
+combined_data |>
+  arrange(Variables, Month)
+
+
+
+## -----------------------------------------------------------------------------
+#| label: line-chart-plot
+
+line_plot <- ggplot(combined_data, aes(x = Month)) +
+  geom_line(aes(y = Value_Average, color = "Average")) +
+  geom_line(aes(y = Value_2023, color = "2023")) +
+  facet_wrap(~ Variables, scales = "free_y") +
+  labs(
+    title = "Trends vs 2023", 
+    x = "Month", 
+    y = "Rate",
+    color = "Inflation Rate"  # Change legend title here
+    ) +
+  scale_color_manual(values = c("Average" = "blue", "2023" = "red")) +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(1, 6, 12), labels = c("Jan", "Jun", "Dec"))
+
+line_plot
 
 
 ## -----------------------------------------------------------------------------
@@ -196,4 +269,35 @@ ggplot(pivoted_total_data, aes(x = Date, y = Value)) +
   labs(title = "Bar Chart of Pivoted Total Data", x = "Category", y = "Inflation Rate") +
   theme_minimal()
 
+
+
+## -----------------------------------------------------------------------------
+#| label: scatter-plot-visualization
+#| fig.width: 12
+#| fig.height: 8
+
+# Convert Month and Year to a combined date variable for X-axis
+pivoted_data$Date <- as.Date(paste(pivoted_data$Year, pivoted_data$Month, "01", sep = "-"))
+
+# Create scatter plot
+scatter_plot <- ggplot(pivoted_data, aes(x = Date, y = Value, color = Variables)) +
+  geom_point(alpha = 0.6, size = 2) +  # Adjusted point size for better visibility
+  geom_smooth(method = "lm", se = FALSE, linetype = "dashed", linewidth = 1) + # Adjusted line width for clarity
+  scale_color_manual(values = custom_colors) +  
+  labs(
+    title = "Scatter Plot of Year-on-Year CPI Changes by Category",
+    x = "Date",
+    y = "CPI Change (%)"
+  ) + 
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 16, face = "bold"),
+    axis.title = element_text(size = 14),
+    axis.text = element_text(size = 12),
+    legend.title = element_text(size = 14),
+    legend.text = element_text(size = 12),
+    legend.position = "right"
+  )
+
+scatter_plot
 

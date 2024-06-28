@@ -78,6 +78,25 @@ We used the Quarto publication framework and the R programming language, along w
 -   *zoo* for interpolating annual population data from the decennial U.S. census
 
 # Improved Visualization
+```{r}
+#| label: improved-visualization
+
+line_plot <- ggplot(combined_data, aes(x = Month)) +
+  geom_line(aes(y = Value_Average, color = "Average")) +
+  geom_line(aes(y = Value_2023, color = "2023")) +
+  facet_wrap(~ Variables, scales = "free_y") +
+  labs(
+    title = "Trends vs 2023", 
+    x = "Month", 
+    y = "Rate",
+    color = "Inflation Rate"  # Change legend title here
+    ) +
+  scale_color_manual(values = c("Average" = "blue", "2023" = "red")) +
+  theme_minimal() +
+  scale_x_continuous(breaks = c(1, 6, 12), labels = c("Jan", "Jun", "Dec"))
+
+line_plot
+```
 
 # Further Suggestions for Interactivity
 
