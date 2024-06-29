@@ -16,9 +16,7 @@ The code below requires the following packages:
 #| message: false
 
 library(tidyverse)
-library(ggplot2)
 library(knitr)
-library(dplyr)
 library(readxl)
 ```
 
