@@ -221,5 +221,5 @@ combined_all_items_data |>
 
 # Conclusion
 
-The data are now ready for visualization. Next, we will plot 2 trend lines, average past data and 2023 data, for each category using the ggplot2 package in the tidyverse collection. There will also be a generic trend line for all items to show the overall trend in inflation rates.
+The data are now ready for visualization. Next, we will plot 2 trend lines, average past data and 2023 data, for each category using the ggplot2 package in the tidyverse collection. To plot the individual categories, we will use a ggplot facet grid to display each category separately. There will also be a generic trend line for all items to show the overall trend in inflation rates. 
 
