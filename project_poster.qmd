@@ -19,6 +19,7 @@ knitr:
 #| include: false
 
 library(knitr)
+library(ggplot2)
 purl("project_prep.qmd")
 source("project_prep.R")
 ```
@@ -121,18 +122,30 @@ ggplot(all_items_data, aes(x = Date, y = Value, group = 1)) +
 ```{r}
 #| label: overview-visualization-2
 
+#  to make the y scale format consistent (1 decimal place)
+one_dp_format <- function(x) sprintf("%.1f", x)
+
 ggplot(combined_all_items_data, aes(x = Month)) +
   geom_line(aes(y = Value_Average, color = "Average (2020-2022)")) +
   geom_line(aes(y = Value_2023, color = "2023")) +
   labs(
-    title = "Trends vs 2023", 
+    title = "Singapore's average inflation trend for all items", 
     x = "Month", 
-    y = "Rate",
+    y = "Rate (%)",
     color = "Inflation Rate"  # Change legend title here
     ) +
   scale_color_manual(values = c("Average (2020-2022)" = "blue", "2023" = "red")) +
   theme_minimal() +
-  scale_x_continuous(breaks = c(1, 6, 12), labels = c("Jan", "Jun", "Dec"))
+  scale_x_continuous(breaks = c(1, 6, 12), labels = c("Jan", "Jun", "Dec")) + 
+  scale_y_continuous(labels = one_dp_format) +
+  theme(
+    plot.title = element_text(face="bold"),
+    axis.title.x = element_text(face = "bold", vjust="1.2"),
+    axis.title.y = element_text(face = "bold"),
+    legend.title = element_text(face = "bold"),
+  )
+  
+combined_all_items_data
 ```
 
 # Overview Visualization - 3
@@ -180,20 +193,32 @@ ggplot(all_items_data, aes(x = Date, y = Value, group = 1)) +
 # Improved Visualization
 ```{r}
 #| label: improved-visualization
+#| fig.width: 8.5
+#| fig.height: 5
+
+#  to make the y scale format consistent (1 decimal place)
+one_dp_format <- function(x) sprintf("%.1f", x)
 
 line_plot <- ggplot(combined_data, aes(x = Month)) +
   geom_line(aes(y = Value_Average, color = "Average (2020-2022)")) +
   geom_line(aes(y = Value_2023, color = "2023")) +
-  facet_wrap(~ Variables, scales = "free_y") +
+  facet_wrap(~ Variables, scales = "free_y", axes="all", axis.labels="all_x") +
   labs(
-    title = "Trends vs 2023", 
+    title = "Singapore's Past Average Inflation Trends (2020-2022) vs 2023", 
     x = "Month", 
-    y = "Rate",
-    color = "Inflation Rate"  # Change legend title here
-    ) +
+    y = "Rate (%)",
+    color = "Inflation Rate"  # Change legend title here,h
+  ) +
   scale_color_manual(values = c("Average (2020-2022)" = "blue", "2023" = "red")) +
   theme_minimal() +
-  scale_x_continuous(breaks = c(1, 6, 12), labels = c("Jan", "Jun", "Dec"))
+  scale_x_continuous(breaks = c(1, 6, 12), labels = c("Jan", "Jun", "Dec")) +
+  scale_y_continuous(labels = one_dp_format) +
+  theme(
+    plot.title = element_text(face="bold"),
+    axis.title.x = element_text(face = "bold", vjust="1.2"),
+    axis.title.y = element_text(face = "bold"),
+    legend.title = element_text(face = "bold"),
+  )
 
 line_plot
 ```
