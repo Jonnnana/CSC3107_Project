@@ -24,6 +24,7 @@ source("project_prep.R")
 ```
 
 # Introduction
+
 The infographic published by The Straits Times provides a comprehensive overview of how prices have changed in 2023. Featuring a heat map, it visually represents the monthly inflationary impact on a wide range of key items. This illustration highlights the varying rates of price changes across different categories of goods and services (e.g. food, healthcare, transportation, etc.) throughout the year. Through this visual tool, readers can gain a deeper understanding of the broader economic landscape and discern inflation trends and their impacts on essential goods and services in Singapore. In addition, this information allows readers to assess whether their personal experiences with inflation align with the actual data collected, offering a clearer picture of the economic environment.
 
 # Previous Visualization
@@ -38,6 +39,7 @@ include_graphics("images/old_poster.png")
 ```
 
 # Strengths
+
 -   The heatmap has organized the information in different categories which allow users to see the impact of inflation towards different domains over the months from 2022 to 2023.
 
 -   Each category is clearly labelled while being separated with padding and a line to ensure users can focus on one category at a time without accidentally reading information from another category. This eases the visual load of the user which reduces the time needed for the users to understand the heatmap
@@ -60,7 +62,6 @@ include_graphics("images/old_poster.png")
 
     -   "Miscellaneous goods and services" is too generalize.
 
-
 # Implementation
 
 ## Data
@@ -74,11 +75,13 @@ include_graphics("images/old_poster.png")
 We used the Quarto publication framework and the R programming language, along with the following third-party packages:
 
 -   *readxl* for data import
--   *tidyverse* for data transformation, including *ggplot2* for visualization based on the grammar of graphics
+-   *tidyverse* package which includes:
+    -   *ggplot2* for data visualization
+    -   *dplyr* for data transformation
 -   *knitr* for dynamic document generation
--   *zoo* for interpolating annual population data from the decennial U.S. census
 
 # Overview Visualization - 1
+
 ```{r}
 #| label: overview-visualization-1
 
@@ -117,7 +120,9 @@ ggplot(all_items_data, aes(x = Date, y = Value, group = 1)) +
     plot.margin = margin(t = 20, r = 20, b = 20, l = 20)
   )
 ```
+
 # Overview Visualization - 2
+
 ```{r}
 #| label: overview-visualization-2
 
@@ -136,6 +141,7 @@ ggplot(combined_all_items_data, aes(x = Month)) +
 ```
 
 # Overview Visualization - 3
+
 ```{r}
 #| label: overview-visualization-3
 
@@ -178,6 +184,7 @@ ggplot(all_items_data, aes(x = Date, y = Value, group = 1)) +
 ```
 
 # Improved Visualization
+
 ```{r}
 #| label: improved-visualization
 
@@ -205,7 +212,8 @@ As our visualisation was to be non-interactive for a poster, we did not implemen
 1.  *Interactive plots* for the users to potentially select the number of years they would like to view for the inflation rate over the past few years. This can be achieved with the *plotly* library in R which helps to embed interactivity into web applications.
 2.  *A dashboard* for users to interact with various elements of our chart to display the data that they want to see. This can be accomplished with the *shiny* library in R which helps to build complex dashboards and applications that display interactive plots, tables and other UI elements.
 3.  Another library to help with interactivity would be *highcharter* which makes use of the Highcharts JavaScript library to provide a simple interface to generate sophisticated and highly customizable charts.
+4.  *Predictive Analysis* to forecast future trends and outcomes for the users to view. The *tidymodels* library would assist in providing the essentials to build models to predict future outcomes.
 
 # Conclusion
 
-We successfully implemented all suggested improvements for the non-interactive visualization. By labeling every state and choosing a colorblind-friendly palette, the revised plot is more accessible. The logarithmic color scale makes the decrease in incidence after the introduction of the vaccine less striking but enables readers to detect patterns in the low-incidence range more easily.
+We have successfully implemented all suggested improvements for the non-interactive visualization. Adding additional past year's data allows users are able to compare trends of the change in inflation rate between 2023 and the average of the past few years, providing them with more valuable insights to the users through comparison. Moreover, implementing a line chart further enhances the visualization of the trends in the plot.
