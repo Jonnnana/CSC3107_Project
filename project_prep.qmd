@@ -96,7 +96,9 @@ data <- data |>
 options(max.print = 1e6)
 print(data, n = nrow(data), width = Inf)
 ```
+
 We further transform the data by pivoting the data frame to a longer format, separating the `Month_Year` column into `Year` and `Month`, converting the `Month` column into numeric using a mapping, and sorting the data by `Year` and `Month`:
+
 ```{r}
 #| label: further-transform-data
 # Create a month mapping
@@ -135,6 +137,7 @@ all_items_data
 ```
 
 In order to allow the user to compare the trends during the pandemic and 2023, we find the average of the past years excluding 2023. This will allow the user to see the trends in the change in inflation rate between 2023 and the previous years.
+
 ```{r}
 #| label: find-average-except-2023
 
@@ -175,6 +178,7 @@ average_all_items_except_2023 |>
 ```
 
 This code chunk processes the 2023 data by filtering the data to include only the year 2023
+
 ```{r}
 #| label: process-2023-data
 
@@ -201,6 +205,7 @@ all_items_data_2023
 ```
 
 Finally, we combine both the average data and the 2023 data to create a single dataset for visualisation:
+
 ```{r}
 #| label: combine-data
 
@@ -222,4 +227,3 @@ combined_all_items_data |>
 # Conclusion
 
 The data are now ready for visualization. Next, we will plot 2 trend lines, average past data and 2023 data, for each category using the ggplot2 package in the tidyverse collection. To plot the individual categories, we will use a ggplot facet grid to display each category separately. There will also be a generic trend line for all items to show the overall trend in inflation rates.
-

@@ -60,7 +60,7 @@ include_graphics("images/old_poster.png")
 
     -   "Food (excludes food-serving services)" which require more clarification on what services are being excluded
 
-    -   "Miscellaneous goods and services" is too generalize.
+    -   "Miscellaneous goods and services" is too generic.
 
 # Implementation
 
@@ -76,8 +76,8 @@ We used the Quarto publication framework and the R programming language, along w
 
 -   *readxl* for data import
 -   *tidyverse* package which includes:
-    -   *ggplot2* for data visualization
-    -   *dplyr* for data transformation
+-   *ggplot2* for data visualization
+-   *dplyr* for data transformation
 -   *knitr* for dynamic document generation
 
 # Overview Visualization - 1
@@ -129,7 +129,7 @@ ggplot(all_items_data, aes(x = Date, y = Value, group = 1)) +
 #  to make the y scale format consistent (1 decimal place)
 one_dp_format <- function(x) sprintf("%.1f", x)
 
-ggplot(combined_all_items_data, aes(x = Month)) +
+overall_plot <- ggplot(combined_all_items_data, aes(x = Month)) +
   geom_line(aes(y = Value_Average, color = "Average (2020-2022)")) +
   geom_line(aes(y = Value_2023, color = "2023")) +
   labs(
@@ -148,6 +148,7 @@ ggplot(combined_all_items_data, aes(x = Month)) +
     axis.title.y = element_text(face = "bold"),
     legend.title = element_text(face = "bold"),
   )
+overall_plot
 ```
 
 # Overview Visualization - 3
@@ -199,6 +200,10 @@ ggplot(all_items_data, aes(x = Date, y = Value, group = 1)) +
 #| label: improved-visualization
 #| fig.width: 8.5
 #| fig.height: 5
+#| warning: false
+
+
+library(patchwork)
 
 #  to make the y scale format consistent (1 decimal place)
 one_dp_format <- function(x) sprintf("%.1f", x)
@@ -224,7 +229,7 @@ line_plot <- ggplot(combined_data, aes(x = Month)) +
     legend.title = element_text(face = "bold"),
   )
 
-line_plot
+overall_plot / line_plot
 ```
 
 # Further Suggestions for Interactivity
