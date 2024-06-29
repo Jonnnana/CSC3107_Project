@@ -122,7 +122,7 @@ ggplot(all_items_data, aes(x = Date, y = Value, group = 1)) +
 #| label: overview-visualization-2
 
 ggplot(combined_all_items_data, aes(x = Month)) +
-  geom_line(aes(y = Value_Average, color = "Average")) +
+  geom_line(aes(y = Value_Average, color = "Average (2020-2022)")) +
   geom_line(aes(y = Value_2023, color = "2023")) +
   labs(
     title = "Trends vs 2023", 
@@ -130,7 +130,7 @@ ggplot(combined_all_items_data, aes(x = Month)) +
     y = "Rate",
     color = "Inflation Rate"  # Change legend title here
     ) +
-  scale_color_manual(values = c("Average" = "blue", "2023" = "red")) +
+  scale_color_manual(values = c("Average (2020-2022)" = "blue", "2023" = "red")) +
   theme_minimal() +
   scale_x_continuous(breaks = c(1, 6, 12), labels = c("Jan", "Jun", "Dec"))
 ```
@@ -182,7 +182,7 @@ ggplot(all_items_data, aes(x = Date, y = Value, group = 1)) +
 #| label: improved-visualization
 
 line_plot <- ggplot(combined_data, aes(x = Month)) +
-  geom_line(aes(y = Value_Average, color = "Average")) +
+  geom_line(aes(y = Value_Average, color = "Average (2020-2022)")) +
   geom_line(aes(y = Value_2023, color = "2023")) +
   facet_wrap(~ Variables, scales = "free_y") +
   labs(
@@ -191,7 +191,7 @@ line_plot <- ggplot(combined_data, aes(x = Month)) +
     y = "Rate",
     color = "Inflation Rate"  # Change legend title here
     ) +
-  scale_color_manual(values = c("Average" = "blue", "2023" = "red")) +
+  scale_color_manual(values = c("Average (2020-2022)" = "blue", "2023" = "red")) +
   theme_minimal() +
   scale_x_continuous(breaks = c(1, 6, 12), labels = c("Jan", "Jun", "Dec"))
 
