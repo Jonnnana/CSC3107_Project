@@ -73,7 +73,7 @@ categories <- c(
 )
 ```
 
-The data is then filtered to include only data from the base year onwards (2019). This is done to narrow down the size of the dataset for easier management and faster performance, as well as to ensure the dataset's consistency with the base year:
+The data is then filtered to include only data from the base year onwards (2020). This is done to narrow down the size of the dataset for easier management and faster performance, as well as to ensure the dataset's consistency with the base year:
 
 ```{r}
 #| label: filter-data-date
@@ -96,7 +96,7 @@ data <- data |>
 options(max.print = 1e6)
 print(data, n = nrow(data), width = Inf)
 ```
-
+We further transform the data by pivoting the data frame to a longer format, separating the `Month_Year` column into `Year` and `Month`, converting the `Month` column into numeric using a mapping, and sorting the data by `Year` and `Month`:
 ```{r}
 #| label: further-transform-data
 # Create a month mapping
@@ -117,23 +117,6 @@ pivoted_data <- pivot_longer(
   # To sort the data by Year, then by Month
   arrange(Year, Month)
 
-# Pivot the data for the total inflation
-# pivoted_total_data <- pivot_longer(
-#   total_inf_data,
-#   cols = starts_with(c("2019", "2020", "2021","2022", "2023")),
-#   names_to = "Month_Year",
-#   values_to = "Value"
-# ) |>
-#   # Separate the Month column into Year and Month
-#   separate(Month_Year, into = c("Year", "Month"), sep = " ") |>
-#   # Convert Month column into numeric using mapping
-#   mutate(Year = as.numeric(Year), Month = month_mapping[Month]) |>
-#   # To sort the data by Year, then by Month
-#   arrange(Year, Month)
-
-# pivoted_data
-# pivoted_total_data
-
 all_items_data <- total_inf_data |>
   pivot_longer(
     cols = starts_with(c("2019", "2020", "2021", "2022", "2023")),
@@ -151,8 +134,7 @@ all_items_data <- total_inf_data |>
 all_items_data
 ```
 
-# Find the average between other years except 2023
-
+In order to allow the user to compare the trends during the pandemic and 2023, we find the average of the past years excluding 2023. This will allow the user to see the trends in the change in inflation rate between 2023 and the previous years.
 ```{r}
 #| label: find-average-except-2023
 
@@ -192,8 +174,7 @@ average_all_items_except_2023 |>
 
 ```
 
-# Process the 2023 Data
-
+This code chunk processes the 2023 data by filtering the data to include only the year 2023
 ```{r}
 #| label: process-2023-data
 
@@ -219,8 +200,7 @@ all_items_data_2023$Year <- NULL
 all_items_data_2023
 ```
 
-# Combine the Data
-
+Finally, we combine both the average data and the 2023 data to create a single dataset for visualisation:
 ```{r}
 #| label: combine-data
 
@@ -240,3 +220,6 @@ combined_all_items_data |>
 ```
 
 # Conclusion
+
+The data are now ready for visualization. Next, we will plot 2 trend lines, average past data and 2023 data, for each category using the ggplot2 package in the tidyverse collection. There will also be a generic trend line for all items to show the overall trend in inflation rates.
+
