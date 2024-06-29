@@ -38,35 +38,36 @@ include_graphics("images/old_poster.png")
 ```
 
 # Strengths
+-   The heatmap has organized the information in different categories which allow users to see the impact of inflation towards different domains over the months from 2022 to 2023.
 
--	The use of heatmap design allows the data to be visually intuitive, enabling the users to determine changes in inflation rate more efficiently on a year on year basis.
--	The heatmap has organized the information in different categories which allow users to compare the impact of inflation towards different domains over the months from 2022 to 2023. 
--	Each category is clearly labelled while being separated with padding and a line to ensure users can focus on one category at a time without accidentally reading information from another category. This eases the visual load of the user which reduces the time needed for the users to understand the heatmap
--	The average column calculates the average change between the years which allows the users to see the overall impact of the inflation for the different domains.
--	Data source has been credited at the end of the heatmap where the source is from the Singapore Department of Statistics
+-   Each category is clearly labelled while being separated with padding and a line to ensure users can focus on one category at a time without accidentally reading information from another category. This eases the visual load of the user which reduces the time needed for the users to understand the heatmap
 
+-   The average column calculates the average change between the years which allows the users to see the overall impact of the inflation for the different domains.
+
+-   Data source has been credited at the end of the heatmap where the source is from the Singapore Department of Statistics
 
 # Suggested Improvements
 
-1.  *Better color scheme can be used.* It seems like the current color scheme is using a qualitative palette which is not suitable for the data type. A diverging palette could be used to show the increase or decrease in inflation rate more effectively where there are positive and negative values.
+1.  *Spelling out the months instead of just letters* could provide better understanding of the graph. Letters may result in the reader needing more time to interpret them in the poster which increases the cognitive load of the reader.
 
-2.  *Spelling out the months instead of just letters* could provide better understanding of the graph rather than letters which result in the reader needing to interpret it on the graph, increasing the cognitive load of the reader.
+2.  *Include change in Inflation Rate from the past few years* which allow readers to compare the trend of the inflation rate changes over the past years with the changes from 2023. This portrays the message of the poster more clearly as it shows impact of inflation in 2023 compared to past years.
 
-3.  *Simply using a heatmap doesn't explicitly show the changes.* A line chart could be used to show the increase or decrease in inflation rate, the heatmap does not show this change really well. 
+3.  *Implementing a line chart instead of the heat map* allows readers to see trends more clearly as they do not have to refer to the color legend to understand the graph.
 
-4.  *Clarify or remove vague sections* such as "Food (excludes food-serving services)" and "Miscellaneous goods and services".
+4.  *Clarify or remove vague sections* such as:
+
+    -   "Food (excludes food-serving services)" which require more clarification on what services are being excluded
+
+    -   "Miscellaneous goods and services" is too generalize.
 
 
 # Implementation
 
 ## Data
 
--   Weekly counts of measles cases by state were obtained from Project Tycho.[^2] The data have missing weeks, which were treated as zero in @fig-wsj-on-poster, potentially underestimating the annual total. Instead, we calculated the weekly mean case count on the basis of non-missing data only.
--   Decennial U.S. census data for each state.[^3]
+-   The change in inflation rate from the past few years since 1962 from different domains were obtained from the SingStat Website.[^1] The data does contain missing data however, after filtering and selecting the relevant years we need for our plot, we manage to remove the missing data from our table.
 
-[^2]: <https://doi.org/10.25337/T7/ptycho.v2.0/US.14189004>
-
-[^3]: <https://www.stats.indiana.edu/population/PopTotals/historic_counts_states.asp>
+[^1]: https://www.singstat.gov.sg/-/media/files/publications/economy/cpiapr24.ashx
 
 ## Software
 
