@@ -27,7 +27,9 @@ source("project_prep.R")
 
 # Introduction
 
-The infographic published by The Straits Times provides a comprehensive overview of how prices have changed in 2023. Featuring a heat map, it visually represents the monthly inflationary impact on a wide range of key items. This illustration highlights the varying rates of price changes across different categories of goods and services (e.g. food, healthcare, transportation, etc.) throughout the year. Through this visual tool, readers can gain a deeper understanding of the broader economic landscape and discern inflation trends and their impacts on essential goods and services in Singapore. In addition, this information allows readers to assess whether their personal experiences with inflation align with the actual data collected, offering a clearer picture of the economic environment.
+The infographic published by The Straits Times features a heat map which visually represents the monthly inflationary impact on a wide range of key items, highlighting the varying rates of price changes across different categories of goods and services (e.g. food, healthcare, transportation, etc.) throughout the year. Through this visual tool, readers can gain a deeper understanding of the broader economic landscape and discern inflation trends and their impacts on essential goods and services in Singapore. In addition, this information allows readers to assess whether their personal experiences with inflation align with the actual data collected, offering a clearer picture of the economic environment.
+
+However, we believe that several aspects of the plot can be improved to enhance the reader's experience and understanding of the data. In this document, we have outlined the strengths and weaknesses of the original visualization, suggest improvements, and provide an improved visualization that incorporates these suggestions. Similarly, we have also proposed interactive features that could be implemented to further enhance the visualization.
 
 # Previous Visualization
 
@@ -42,33 +44,35 @@ include_graphics("images/old_poster.png")
 
 # Strengths
 
--   The heatmap has organized the information in different categories which allow users to see the impact of inflation towards different domains over the months from 2022 to 2023.
+1.  The heat map has organized the information in different categories which allow users to see the impact of inflation towards different domains over the months from 2022 to 2023.
 
--   Each category is clearly labelled while being separated with padding and a line to ensure users can focus on one category at a time without accidentally reading information from another category. This eases the visual load of the user which reduces the time needed for the users to understand the heatmap
+2.  Each category is clearly labelled while being separated with padding and a line to ensure users can focus on one category at a time without accidentally reading information from another category. This eases the visual load of the user and reduces the time needed for the users to understand the heat map.
 
--   The average column calculates the average change between the years which allows the users to see the overall impact of the inflation for the different domains.
+3.  The average column calculates the average change in the inflation rate between the years which allows the users to see the overall inflationary impact for the different domains.
 
--   Data source has been credited at the end of the heatmap where the source is from the Singapore Department of Statistics
+4.  The data source (from the Singapore Department of Statistics) has been credited at the end of the heat map.
 
 # Suggested Improvements
 
-1.  *Spelling out the months instead of just letters* could provide better understanding of the graph. Letters may result in the reader needing more time to interpret them in the poster which increases the cognitive load of the reader.
+1.  **Spelling out the months instead of just letters** provides a clearer understanding of the graph. Representing months with initials (e.g., JFMAMJJASON) can be ambiguous and not immediately recognizable, which increases the cognitive load for the reader. This makes the graph harder to interpret quickly.
 
-2.  *Include change in Inflation Rate from the past few years* which allow readers to compare the trend of the inflation rate changes over the past years with the changes from 2023. This portrays the message of the poster more clearly as it shows impact of inflation in 2023 compared to past years.
+2.  **Including the change in the inflation rate from the past few years** allows readers to compare the trend of the inflation rate changes over the past years with the changes from 2023. This portrays the message of the poster more clearly as it shows the impact of inflation in 2023 compared to past years.
 
-3.  *Implementing a line chart instead of the heat map* allows readers to see trends more clearly as they do not have to refer to the color legend to understand the graph.
+3.  **Implementing a line chart instead of the heat map** allows readers to see trends more clearly as they do not have to refer to the color legend to understand the graph.
 
-4.  *Clarify or remove vague sections* such as:
+4.  **Clarify or remove vague categories** such as:
 
-    -   "Food (excludes food-serving services)" which require more clarification on what services are being excluded
+    -   *Food (excludes food-serving services)*.  
+    This category requires more clarification on what services are being excluded.
 
-    -   "Miscellaneous goods and services" is too generic.
+    -   *Miscellaneous goods and services*.  
+    This category is too generic and lacks context.
 
 # Implementation
 
 ## Data
 
--   The change in inflation rate from the past few years since 1962 from different domains were obtained from the SingStat Website.[^1] The data does contain missing data however, after filtering and selecting the relevant years we need for our plot, we manage to remove the missing data from our table.
+-   The change in inflation rate from the past few years since 1962 from different domains were obtained from the SingStat website.[^1] As the CSV file does contain missing data, we were able to remove the missing data from our table after filtering and selecting the relevant years needed for our plot.
 
 [^1]: https://www.singstat.gov.sg/-/media/files/publications/economy/cpiapr24.ashx
 
@@ -77,7 +81,7 @@ include_graphics("images/old_poster.png")
 We used the Quarto publication framework and the R programming language, along with the following third-party packages:
 
 -   *readxl* for data import
--   *tidyverse* package which includes:
+-   *tidyverse* which includes:
     -   *ggplot2* for data visualization
     -   *dplyr* for data transformation
 -   *knitr* for dynamic document generation
@@ -155,13 +159,12 @@ overall_plot / line_plot +
 
 # Further Suggestions for Interactivity
 
-As our visualisation was to be non-interactive for a poster, we did not implement any interactive features. However, if the visualization were to be interactive, a few features would be considered. They are as follows:
+As the rubrics required our visualization to be non-interactive for a poster, we did not implement any interactive features. However, if the visualization were to be interactive, we would consider the following features:
 
-1.  *Interactive plots* for the users to potentially select the number of years they would like to view for the inflation rate over the past few years. This can be achieved with the *plotly* library in R which helps to embed interactivity into web applications.
-2.  *A dashboard* for users to interact with various elements of our chart to display the data that they want to see. This can be accomplished with the *shiny* library in R which helps to build complex dashboards and applications that display interactive plots, tables and other UI elements.
-3.  Another library to help with interactivity would be *highcharter* library which provides a simple interface to generate sophisticated and highly customizable charts.
-4.  *Predictive Analysis* to forecast future trends and outcomes for the users to view. The *tidymodels* library would assist in providing the essentials to build models to predict future outcomes.
+1.  **Interactive plots** for the users to dynamically select the number of years they would like to view for the inflation rate over the past few years. This can be achieved with the *plotly* library in R which helps to embed interactivity into web applications.
+2.  **Construct a dashboard** for users to interact with various elements of our chart and display the data that they want to see. This can be accomplished with the *shiny* library in R which helps to build complex dashboards and applications that display interactive plots, tables and other UI elements.
+3.  Another library that could help with interactivity is the *highcharter* library, which provides a simple interface for generating sophisticated and highly customizable charts.
 
 # Conclusion
 
-We have successfully implemented all suggested improvements for the non-interactive visualization. Adding additional past year's data allows users are able to compare trends of the change in inflation rate between 2023 and the average of the past few years, providing them with more valuable insights to the users through comparison. Moreover, implementing a line chart further enhances the visualization of the trends in the plot.
+We have successfully implemented all the suggested improvements for the non-interactive visualization. Adding additional past year's data allows users to compare trends of the change in inflation rate between 2023 and the average of the past few years, providing them with more valuable insights through means of comparison. Moreover, implementing a line chart further enhances the visualization of the trends in the plot.

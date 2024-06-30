@@ -7,7 +7,7 @@ editor: visual
 
 # Introduction
 
-This document outlines the data engineering required to reconstruct and improve the visualisation of the heat map as shown in @fig-old-vis-on-poster, which depicts the monthly inflationary impact on key goods and services across each month in Singapore over 2023.
+This document outlines the data engineering required to reconstruct and improve the visualization of the heat map as shown in @fig-old-vis-on-poster, which depicts the monthly inflationary impact on key goods and services across each month in Singapore over 2023.
 
 The code below requires the following packages:
 
@@ -30,9 +30,9 @@ include_graphics("images/old_poster.png")
 
 # Data Cleaning
 
-The Straits Times based their visualisation on data published by the Singapore Department of Statistics (DOS). whereby the data in CSV format represents the CPI for each category of key goods and services with 2019 as the base year. The CSV file contains 15 separate sheets which cover average retail prices, CPI and year-on-year percent change in CPI across various time periods (annual, half-yearly, quarterly, and monthly) respectively.
+The Straits Times based their visualization on data published by the Singapore Department of Statistics (DOS), whereby the data in CSV format represents the CPI for each category of key goods and services with 2019 as the base year. The CSV file contains 15 separate sheets which cover average retail prices, CPI and year-on-year percent change in CPI across various time periods (annual, half-yearly, quarterly, and monthly) respectively.
 
-However, with reference to @fig-old-vis-on-poster, only Sheet T11 *(Percent Change In Consumer Price Index (CPI) Over Corresponding Period Of Previous Year, 2019 As Base Year, Monthly)* will be used to accurately reflect the year-on-year data ordered by month as visualised in the heat map.
+However, with reference to @fig-old-vis-on-poster, only Sheet T11 *(Percent Change In Consumer Price Index (CPI) Over Corresponding Period Of Previous Year, 2019 As Base Year, Monthly)* will be used to accurately reflect the year-on-year data ordered by month as visualized in the heat map.
 
 Relevant columns for data processing include:
 
@@ -52,7 +52,7 @@ data <- read_excel("cpiapr24.xlsx", sheet = "T11", skip = 5) |>
 data
 ```
 
-The data is filtered to include only the relevant variables so as to focus on the specific categories visualised on the heat map:
+The data is then filtered to include only the relevant variables so as to focus on the specific categories visualized on the heat map:
 
 ```{r}
 #| label: filter-data-categories
@@ -73,7 +73,7 @@ categories <- c(
 )
 ```
 
-The data is then filtered to include only data from the base year onwards (2020). This is done to narrow down the size of the dataset for easier management and faster performance, as well as to ensure the dataset's consistency with the base year:
+The data is then filtered to include only data from 2020 onwards. This is done to narrow down the size of the dataset for easier management and faster performance, as well as to align with the onset date of the COVID-19 pandemic.
 
 ```{r}
 #| label: filter-data-date
@@ -97,7 +97,7 @@ options(max.print = 1e6)
 print(data, n = nrow(data), width = Inf)
 ```
 
-We further transform the data by pivoting the data frame to a longer format, separating the `Month_Year` column into `Year` and `Month`, converting the `Month` column into numeric using a mapping, and sorting the data by `Year` and `Month`:
+We further transformed the data by pivoting the data frame to a longer format. This is achieved by separating the `Month_Year` column into `Year` and `Month`, converting the `Month` column into numeric using a mapping, and sorting the data by `Year` and `Month`:
 
 ```{r}
 #| label: further-transform-data
@@ -136,7 +136,7 @@ all_items_data <- total_inf_data |>
 all_items_data
 ```
 
-In order to allow the user to compare the trends during the pandemic and 2023, we find the average of the past years excluding 2023. This will allow the user to see the trends in the change in inflation rate between 2023 and the previous years.
+In order to compare the trends during the COVID-19 pandemic and 2023, we find the average change in inflation rate of the years preceding 2023. This will allow the user to see the trends in the change in inflation rate between 2023 and the preceding pandemic years (2020 - 2022).
 
 ```{r}
 #| label: find-average-except-2023
@@ -169,7 +169,7 @@ all_items_data_except_2023 <- all_items_data |>
 
 average_all_items_except_2023 <- all_items_data_except_2023 |>
   group_by(Variables, Month) |>
-  summarize(average_Value = mean(Value)) |>
+  summarize(average_Value = mean(Value), .groups = "drop") |>
   arrange(Month)
 
 average_all_items_except_2023 |> 
@@ -177,7 +177,7 @@ average_all_items_except_2023 |>
 
 ```
 
-This code chunk processes the 2023 data by filtering the data to include only the year 2023
+This code chunk processes the 2023 data by filtering the data to include only the year 2023.
 
 ```{r}
 #| label: process-2023-data
@@ -204,7 +204,7 @@ all_items_data_2023$Year <- NULL
 all_items_data_2023
 ```
 
-Finally, we combine both the average data and the 2023 data to create a single dataset for visualisation:
+Finally, we combine both the average data from the preceding years (2020 - 2022) and the data from 2023 to create a single dataset for visualization.
 
 ```{r}
 #| label: combine-data
@@ -226,4 +226,10 @@ combined_all_items_data |>
 
 # Conclusion
 
-The data are now ready for visualization. Next, we will plot 2 trend lines, average past data and 2023 data, for each category using the ggplot2 package in the tidyverse collection. To plot the individual categories, we will use a ggplot facet grid to display each category separately. There will also be a generic trend line for all items to show the overall trend in inflation rates.
+The data is now ready for visualisation. We will be plotting 2 line graphs using the *ggplot2* package in the *tidyverse* collection.
+
+The first line graph will visualise Singapore's year-on-year change in inflation rate by month based on the averages of each category. On the other hand, the second line graph will be plotted based on individual categories by using a *ggplot* facet grid to display each category separately. Both line graphs will depict 2 trend lines;
+
+-   The year-on-year change in inflation rate for the year 2023
+
+-   The average year-on-year change in inflation rate for the preceding years (2020 - 2022)
