@@ -29,7 +29,7 @@ source("project_prep.R")
 
 The infographic published by The Straits Times features a heat map which visually represents the monthly inflationary impact on a wide range of key items, highlighting the varying rates of price changes across different categories of goods and services (e.g. food, healthcare, transportation, etc.) throughout the year. Through this visual tool, readers can gain a deeper understanding of the broader economic landscape and discern inflation trends and their impacts on essential goods and services in Singapore. In addition, this information allows readers to assess whether their personal experiences with inflation align with the actual data collected, offering a clearer picture of the economic environment.
 
-However, we believe that several aspects of the plot can be improved to enhance the reader's experience and understanding of the data. In this document, we have outlined the strengths and weaknesses of the original visualization, suggest improvements, and provide an improved visualization that incorporates these suggestions. Similarly, we have also proposed interactive features that could be implemented to further enhance the visualization.
+Our team believes that several aspects can be improved to enhance readers' experience and understanding of the data. In this document, we outlined the strengths and weaknesses of the original heat map, suggested improvements, and provided an improved visualization. We also proposed interactive features that could be implemented to further enhance the visualization.
 
 # Previous Visualization
 
