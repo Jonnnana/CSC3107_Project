@@ -37,7 +37,7 @@ Our team believes that several aspects can be improved to enhance readers' exper
 #| label: old-vis-on-poster
 #| fig-cap: "Heat map of inflationary impact on key items over 2023."
 #| out-width: 100%
-#| out-height: 45%
+#| out-height: 35%
 
 include_graphics("images/old_poster.png")
 ```
