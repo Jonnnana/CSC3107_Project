@@ -63,7 +63,7 @@ include_graphics("images/old_poster.png")
 4.  **Clarify or remove vague categories** such as:
 
     -   *Food (excludes food-serving services)*.  
-    This category requires more clarification on what services are being excluded.
+    As this category is a subset under the  already included Food category, we shall exclude it from our visualisation as it does not provide any impactful findings.
 
     -   *Miscellaneous goods and services*.  
     This category is too generic and lacks context.
